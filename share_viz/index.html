@@ -518,6 +518,7 @@ async function init() {
   const requestedPaper = params.get('paper');
   if (requestedPaper) {
     currentPaperSlug = requestedPaper;
+    document.getElementById('paper-select').value = currentPaperSlug;
   } else if (INDEX.papers.length > 0) {
     currentPaperSlug = INDEX.papers[0].slug;
     document.getElementById('paper-select').value = currentPaperSlug;
