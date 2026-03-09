@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OpenAIReview</title>
+<title>OpenAIReview — Results</title>
 <script>
 MathJax = {
   tex: {
@@ -44,7 +44,6 @@ MathJax = {
   --red: #ef4444;
   --red-light: #fef2f2;
   --red-border: #fecaca;
-  --blue-light: #eff6ff;
   --radius: 12px;
   --radius-sm: 8px;
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
@@ -74,7 +73,7 @@ body {
   height: var(--header-h);
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -91,39 +90,36 @@ body {
   width: 1px;
   height: 24px;
   background: var(--border);
+  flex-shrink: 0;
 }
-.paper-select-wrapper {
-  position: relative;
-  flex: 1;
-  max-width: 480px;
-}
-.paper-select-wrapper select {
-  width: 100%;
-  padding: 8px 32px 8px 12px;
+.paper-title {
   font-size: 14px;
   font-weight: 500;
-  font-family: inherit;
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  appearance: none;
-  cursor: pointer;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.paper-select-wrapper select:hover { border-color: #d1d5db; }
-.paper-select-wrapper select:focus { outline: none; border-color: var(--accent); box-shadow: var(--shadow-focus); }
-.paper-select-wrapper::after {
-  content: '';
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0; height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 5px solid var(--text-secondary);
-  pointer-events: none;
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid rgba(0,0,0,0.1);
 }
 
 /* ── Method Tabs ── */
@@ -193,15 +189,8 @@ body {
   gap: 4px;
   white-space: nowrap;
 }
-.metric strong {
-  color: var(--text);
-  font-weight: 600;
-}
-.metric-divider {
-  width: 1px;
-  height: 16px;
-  background: var(--border);
-}
+.metric strong { color: var(--text); font-weight: 600; }
+.metric-divider { width: 1px; height: 16px; background: var(--border); }
 
 /* ── Main Layout ── */
 .main {
@@ -217,12 +206,8 @@ body {
   background: var(--surface);
   border-right: 1px solid var(--border);
 }
-.paper-panel-inner {
-  max-width: 720px;
-  margin: 0 auto;
-}
+.paper-panel-inner { max-width: 720px; margin: 0 auto; }
 
-/* Paragraphs */
 .para {
   padding: 8px 16px;
   margin: 0 -16px 2px;
@@ -247,23 +232,11 @@ body {
   transition: opacity 0.15s;
 }
 .para:hover .para-idx { opacity: 1; }
-.para.has-comment .para-idx,
-.para.has-gt-match .para-idx,
-.para.gt-only .para-idx { opacity: 0.6; }
-
+.para.has-comment .para-idx { opacity: 0.6; }
 .para.has-comment {
   border-left-color: var(--accent);
   background: var(--accent-light);
   cursor: pointer;
-}
-.para.has-gt-match {
-  border-left-color: var(--green);
-  background: var(--green-light);
-  cursor: pointer;
-}
-.para.gt-only {
-  border-left-color: var(--orange);
-  background: var(--orange-light);
 }
 .para.highlight {
   background: #fad7dc;
@@ -271,10 +244,8 @@ body {
 }
 .para p { margin-bottom: 0.6em; }
 .para p:last-child { margin-bottom: 0; }
-
-/* Paragraph typography */
-.para h1, .para h2 { font-size: 18px; font-weight: 700; margin: 8px 0 4px; color: var(--text); }
-.para h3, .para h4 { font-size: 16px; font-weight: 600; margin: 6px 0 2px; color: var(--text); }
+.para h1, .para h2 { font-size: 18px; font-weight: 700; margin: 8px 0 4px; }
+.para h3, .para h4 { font-size: 16px; font-weight: 600; margin: 6px 0 2px; }
 .para code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
 .para pre { background: #f3f4f6; padding: 12px 16px; border-radius: var(--radius-sm); overflow-x: auto; font-size: 13px; margin: 8px 0; }
 .para table { border-collapse: collapse; font-size: 13px; margin: 8px 0; }
@@ -282,48 +253,44 @@ body {
 .para th { background: var(--bg); font-weight: 600; }
 .MathJax { overflow-x: auto; overflow-y: hidden; }
 
+/* ── Resize Handle ── */
+.resize-handle {
+  flex: 0 0 5px;
+  cursor: col-resize;
+  background: var(--border);
+  transition: background 0.15s;
+  position: relative;
+  z-index: 10;
+}
+.resize-handle:hover, .resize-handle.dragging { background: var(--accent); }
+
 /* ── Comment Panel ── */
 .comment-panel {
   flex: 0 0 480px;
+  min-width: 280px;
+  max-width: 60vw;
   overflow-y: auto;
   padding: 20px;
   background: var(--bg);
 }
-
-/* Model badge */
-.model-badge {
-  display: inline-block;
-  font-size: 12px;
-  color: var(--muted);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 4px 10px;
-  margin-bottom: 12px;
-  font-family: 'SF Mono', 'Fira Code', monospace;
-}
-
-/* Overall feedback */
 .overall-feedback {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 16px 20px;
   margin-bottom: 16px;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.65;
   box-shadow: var(--shadow-sm);
 }
 .overall-feedback h3 {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--accent);
   margin-bottom: 8px;
 }
-
-/* Comment cards */
 .comment-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -331,69 +298,24 @@ body {
   padding: 16px 20px;
   margin-bottom: 10px;
   cursor: pointer;
-  transition: box-shadow 0.15s, border-color 0.15s, transform 0.1s;
+  transition: box-shadow 0.15s, border-color 0.15s;
   box-shadow: var(--shadow-sm);
 }
-.comment-card:hover {
-  box-shadow: var(--shadow-md);
-  border-color: #d1d5db;
-}
-.comment-card.active {
-  border-color: var(--accent);
-  box-shadow: var(--shadow-focus), var(--shadow);
-}
-
-.comment-card .card-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-.comment-card .card-title {
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 1.4;
-  flex: 1;
-  color: var(--text);
-}
-.badge {
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.badge.technical { background: var(--red-light); color: #b91c1c; border: 1px solid var(--red-border); }
-.badge.logical { background: var(--orange-light); color: #92400e; border: 1px solid var(--orange-border); }
-
+.comment-card:hover { box-shadow: var(--shadow-md); border-color: #d1d5db; }
+.comment-card.active { border-color: var(--accent); box-shadow: var(--shadow-focus), var(--shadow); }
+.comment-card .card-header { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+.comment-card .card-title { font-weight: 600; font-size: 15px; line-height: 1.4; flex: 1; }
 .comment-card .quote {
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
   border-left: 2px solid var(--border);
   padding-left: 12px;
   margin: 8px 0;
 }
-.comment-card .explanation {
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--text);
-  margin-top: 8px;
-}
-.comment-card .para-link {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--accent);
-  margin-top: 8px;
-  display: inline-block;
-}
-.comment-card .para-link.unlocated {
-  color: var(--text-muted);
-}
-
+.comment-card .explanation { font-size: 14px; line-height: 1.6; margin-top: 8px; }
+.comment-card .para-link { font-size: 11px; font-weight: 500; color: var(--accent); margin-top: 8px; display: inline-block; }
+.comment-card .para-link.unlocated { color: var(--text-muted); }
 .section-label {
   font-size: 11px;
   font-weight: 600;
@@ -404,45 +326,69 @@ body {
   padding-bottom: 6px;
   border-bottom: 1px solid var(--border-light);
 }
+.empty-state { text-align: center; color: var(--text-muted); padding: 48px 24px; font-size: 14px; }
 
-.empty-state {
-  text-align: center;
-  color: var(--text-muted);
+/* ── Status Screen ── */
+.status-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--header-h));
   padding: 48px 24px;
+  text-align: center;
+}
+.status-screen.hidden { display: none; }
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 24px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.status-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.status-msg {
   font-size: 14px;
-}
-
-/* ── Legend ── */
-.legend {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-left: auto;
-  font-size: 11px;
   color: var(--text-secondary);
+  max-width: 420px;
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
+.token-display {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  color: var(--text-secondary);
+  word-break: break-all;
+  max-width: 480px;
+  margin-bottom: 8px;
 }
-.legend-swatch {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
-  border: 1px solid rgba(0,0,0,0.1);
-}
+.status-hint { font-size: 12px; color: var(--text-muted); }
+.status-error { color: #dc2626; }
 
-/* ── Scrollbar ── */
+/* ── Viz chrome hidden until ready ── */
+.viz-chrome { display: none; }
+.viz-chrome.visible { display: block; }
+.viz-main { display: none; }
+.viz-main.visible { display: flex; height: calc(100vh - var(--header-h) - var(--tabs-h) - var(--metrics-h)); }
+
+/* Scrollbars */
 .paper-panel::-webkit-scrollbar,
 .comment-panel::-webkit-scrollbar { width: 6px; }
 .paper-panel::-webkit-scrollbar-track,
 .comment-panel::-webkit-scrollbar-track { background: transparent; }
 .paper-panel::-webkit-scrollbar-thumb,
 .comment-panel::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
-.paper-panel::-webkit-scrollbar-thumb:hover,
-.comment-panel::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 </style>
 </head>
 <body>
@@ -453,27 +399,50 @@ body {
   <div class="header-links" style="display: flex; gap: 16px; font-size: 13px; font-weight: 500; margin-right: 16px;">
     <a href="../blog.html" style="color: var(--text-secondary); text-decoration: none;">Blog</a>
   </div>
-  <div class="paper-select-wrapper">
-    <select id="paper-select"></select>
-  </div>
+  <div class="paper-title" id="paper-title">Loading review...</div>
   <div class="legend" id="legend"></div>
 </div>
-<div class="tabs-bar" id="method-tabs"></div>
-<div class="metrics-bar" id="metrics-bar"></div>
-<div class="main">
+
+<!-- Tabs + metrics only shown when review is ready -->
+<div class="viz-chrome" id="viz-chrome">
+  <div class="tabs-bar" id="method-tabs"></div>
+  <div class="metrics-bar" id="metrics-bar"></div>
+</div>
+
+<!-- Status screen (pending / error / no token) -->
+<div class="status-screen" id="status-screen">
+  <div class="spinner" id="status-spinner"></div>
+  <div class="status-title" id="status-title">Processing your review...</div>
+  <div class="status-msg" id="status-msg">
+    This usually takes 2–5 minutes. You'll receive an email when your review is ready.
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;max-width:480px;width:100%;">
+    <div class="token-display" id="status-token" style="flex:1;margin-bottom:0;"></div>
+    <button id="copy-token-btn" onclick="copyToken()" style="flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 14px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;color:var(--text-secondary);transition:border-color 0.15s,color 0.15s;">Copy</button>
+  </div>
+  <div class="status-hint" id="status-hint">Checking again in 30 seconds...</div>
+</div>
+
+<!-- Main viz (shown when done) -->
+<div class="viz-main" id="viz-main">
   <div class="paper-panel" id="paper-panel"></div>
+  <div class="resize-handle" id="resize-handle"></div>
   <div class="comment-panel" id="comment-panel"></div>
 </div>
 
 <script>
-let INDEX = null;
-let paperCache = {};
-let currentPaperSlug = null;
+
+// const BACKEND_URL = 'https://openaireview-backend-REPLACE.a.run.app';  // Cloud Run URL
+const BACKEND_URL = '';
+
+let paper = null;
 let currentMethod = null;
-const METHOD_ORDER = ['ground_truth','zero_shot','local','progressive','progressive_full'];
 let activeCommentId = null;
-let renderedPaperSlug = null;
+let renderedPaper = false;
 let typesetQueue = Promise.resolve();
+let pollTimer = null;
+
+const METHOD_ORDER = ['ground_truth', 'zero_shot', 'local', 'progressive', 'progressive_full'];
 
 function typesetElement(el) {
   if (!window.MathJax || typeof MathJax.typesetPromise !== 'function') return;
@@ -506,69 +475,7 @@ function renderMarkdownWithMath(text) {
   return html;
 }
 
-async function init() {
-  // Try /data/index.json (serve mode) then data/index.json (static mode)
-  let resp;
-  try {
-    resp = await fetch('/data/index.json');
-    if (!resp.ok) throw new Error('not found');
-  } catch {
-    resp = await fetch('data/index.json');
-  }
-  INDEX = await resp.json();
-  buildPaperSelect();
-  if (INDEX.papers.length > 0) {
-    const params = new URLSearchParams(window.location.search);
-    const requestedPaper = params.get('paper');
-    if (requestedPaper && INDEX.papers.some(p => p.slug === requestedPaper)) {
-      currentPaperSlug = requestedPaper;
-    } else {
-      currentPaperSlug = INDEX.papers[0].slug;
-    }
-    document.getElementById('paper-select').value = currentPaperSlug;
-    await loadPaper(currentPaperSlug);
-    buildMethodTabs();
-    render();
-  }
-}
-
-async function loadPaper(slug) {
-  if (paperCache[slug]) return paperCache[slug];
-  let resp;
-  try {
-    resp = await fetch(`/data/${slug}.json`);
-    if (!resp.ok) throw new Error('not found');
-  } catch {
-    resp = await fetch(`data/${slug}.json`);
-  }
-  const data = await resp.json();
-  paperCache[slug] = data;
-  return data;
-}
-
-function getCurrentPaper() {
-  return paperCache[currentPaperSlug] || null;
-}
-
-function buildPaperSelect() {
-  const sel = document.getElementById('paper-select');
-  INDEX.papers.forEach((p) => {
-    const opt = document.createElement('option');
-    opt.value = p.slug;
-    opt.textContent = p.title.length > 70 ? p.title.slice(0, 70) + '...' : p.title;
-    sel.appendChild(opt);
-  });
-  sel.addEventListener('change', async () => {
-    currentPaperSlug = sel.value;
-    activeCommentId = null;
-    renderedPaperSlug = null;
-    await loadPaper(currentPaperSlug);
-    buildMethodTabs();
-    render();
-  });
-}
-
-function getMethodKeys(paper) {
+function getMethodKeys() {
   if (!paper) return [];
   const keys = Object.keys(paper.methods);
   keys.sort((a, b) => {
@@ -580,16 +487,11 @@ function getMethodKeys(paper) {
   return keys;
 }
 
-function hasGroundTruth(paper) {
-  return paper && paper.methods && !!paper.methods.ground_truth;
-}
-
 function buildMethodTabs() {
   const container = document.getElementById('method-tabs');
   container.innerHTML = '';
-  const paper = getCurrentPaper();
   if (!paper) return;
-  const keys = getMethodKeys(paper);
+  const keys = getMethodKeys();
   if (keys.length > 0 && (!currentMethod || !paper.methods[currentMethod])) {
     currentMethod = keys[0];
   }
@@ -607,57 +509,13 @@ function buildMethodTabs() {
   });
 }
 
-function render() {
-  const paper = getCurrentPaper();
-  if (!paper) return;
-  const paperChanged = renderedPaperSlug !== currentPaperSlug;
-  buildMethodTabs();
-  renderMetrics();
-  renderLegend();
-
-  if (paperChanged) {
-    renderPaperContent();
-    renderedPaperSlug = currentPaperSlug;
-    typesetElement(document.getElementById('paper-panel'));
-  }
-
-  updatePaperHighlights();
-  renderComments();
-}
-
-function renderLegend() {
-  const el = document.getElementById('legend');
-  const paper = getCurrentPaper();
-  const isGt = currentMethod === 'ground_truth';
-  const hasGt = hasGroundTruth(paper);
-  if (isGt || !hasGt) {
-    el.innerHTML = `
-      <span class="legend-item"><span class="legend-swatch" style="background:var(--accent-light);border-left:3px solid var(--accent)"></span>Comment</span>
-    `;
-  } else {
-    el.innerHTML = `
-      <span class="legend-item"><span class="legend-swatch" style="background:var(--green-light);border-left:3px solid var(--green)"></span>Predicted + Refine</span>
-      <span class="legend-item"><span class="legend-swatch" style="background:var(--accent-light);border-left:3px solid var(--accent)"></span>Predicted only</span>
-      <span class="legend-item"><span class="legend-swatch" style="background:var(--orange-light);border-left:3px solid var(--orange)"></span>Refine only</span>
-    `;
-  }
-}
-
 function renderMetrics() {
   const bar = document.getElementById('metrics-bar');
-  const paper = getCurrentPaper();
   if (!paper) { bar.innerHTML = ''; return; }
   const method = paper.methods[currentMethod];
   if (!method) { bar.innerHTML = ''; return; }
-  const m = method.metrics;
-  const comments = method.comments;
-
-  let parts = [];
-
-  // Model info (from method-level data)
-  if (method.model) {
-    parts.push(`<span class="metric">Model <strong>${escapeHtml(method.model)}</strong></span>`);
-  }
+  const parts = [];
+  if (method.model) parts.push(`<span class="metric">Model <strong>${escapeHtml(method.model)}</strong></span>`);
   if (method.prompt_tokens !== undefined) {
     const totalTokens = (method.prompt_tokens + method.completion_tokens).toLocaleString();
     parts.push(`<span class="metric">Tokens <strong>${totalTokens}</strong></span>`);
@@ -665,61 +523,19 @@ function renderMetrics() {
   if (method.cost_usd !== undefined) {
     parts.push(`<span class="metric">Cost <strong>$${method.cost_usd.toFixed(2)}</strong></span>`);
   }
-  if (parts.length > 0) {
-    parts.push(`<span class="metric-divider"></span>`);
-  }
-
-  // Comment count
-  parts.push(`<span class="metric"><strong>${comments.length}</strong> comments</span>`);
-
-  if (!m) {
-    bar.innerHTML = parts.join('');
-    return;
-  }
-
-  if (m.num_predicted !== undefined) {
-    parts.push(`<span class="metric">Predicted <strong>${m.num_predicted}</strong></span>`);
-  }
-  if (m.num_ground_truth !== undefined) {
-    parts.push(`<span class="metric">Refine <strong>${m.num_ground_truth}</strong></span>`);
-  }
-  parts.push(`<span class="metric-divider"></span>`);
-  if (m.recall_llm !== undefined) {
-    parts.push(`<span class="metric">LLM Recall <strong>${(m.recall_llm * 100).toFixed(1)}%</strong></span>`);
-  }
-  if (m.recall_llm_wide !== undefined) {
-    parts.push(`<span class="metric">Wide Recall <strong>${(m.recall_llm_wide * 100).toFixed(1)}%</strong></span>`);
-  }
-  parts.push(`<span class="metric">Loc Recall <strong>${(m.location_recall * 100).toFixed(1)}%</strong></span>`);
-  if (m.location_recall_5 !== undefined) {
-    parts.push(`<span class="metric">Loc\u00b15 <strong>${(m.location_recall_5 * 100).toFixed(1)}%</strong></span>`);
-  }
-  parts.push(`<span class="metric-divider"></span>`);
-  parts.push(`<span class="metric">Precision <strong>${(m.precision * 100).toFixed(1)}%</strong></span>`);
-  parts.push(`<span class="metric">F1 <strong>${(m.f1 * 100).toFixed(1)}%</strong></span>`);
-  if (m.cost_usd !== undefined) {
-    parts.push(`<span class="metric-divider"></span>`);
-    parts.push(`<span class="metric">Cost <strong>$${m.cost_usd.toFixed(2)}</strong></span>`);
-  }
+  if (parts.length > 0) parts.push(`<span class="metric-divider"></span>`);
+  parts.push(`<span class="metric"><strong>${method.comments.length}</strong> comments</span>`);
   bar.innerHTML = parts.join('');
 }
 
-function getCommentParaIndices(method) {
-  const indices = new Set();
-  if (!method) return indices;
-  method.comments.forEach(c => {
-    if (c.paragraph_index != null) indices.add(c.paragraph_index);
-  });
-  return indices;
-}
-
-function getGtParaIndices(paper) {
-  return getCommentParaIndices(paper.methods.ground_truth);
+function renderLegend() {
+  document.getElementById('legend').innerHTML = `
+    <span class="legend-item"><span class="legend-swatch" style="background:var(--accent-light);border-left:3px solid var(--accent)"></span>Comment</span>
+  `;
 }
 
 function renderPaperContent() {
   const panel = document.getElementById('paper-panel');
-  const paper = getCurrentPaper();
   let html = '<div class="paper-panel-inner">';
   paper.paragraphs.forEach(p => {
     const rendered = renderMarkdownWithMath(p.text);
@@ -734,29 +550,21 @@ function renderPaperContent() {
 
 function updatePaperHighlights() {
   const panel = document.getElementById('paper-panel');
-  const paper = getCurrentPaper();
   const method = paper.methods[currentMethod];
-  const commentIndices = getCommentParaIndices(method);
-  const hasGt = hasGroundTruth(paper);
-  const gtIndices = hasGt ? getGtParaIndices(paper) : new Set();
-  const isGt = currentMethod === 'ground_truth';
+  const commentIndices = new Set();
+  if (method) method.comments.forEach(c => { if (c.paragraph_index != null) commentIndices.add(c.paragraph_index); });
 
   panel.querySelectorAll('.para').forEach(el => {
     const idx = parseInt(el.dataset.idx);
     const hasComment = commentIndices.has(idx);
-    const hasGt = gtIndices.has(idx);
-    const isHighlight = activeCommentId != null && method && method.comments.some(
-      c => c.id === activeCommentId && c.paragraph_index === idx
-    );
-
+    const isHighlight = activeCommentId != null && method &&
+      method.comments.some(c => c.id === activeCommentId && c.paragraph_index === idx);
     el.className = 'para';
     if (isHighlight) el.classList.add('highlight');
-    if (!isGt && hasComment && hasGt) el.classList.add('has-gt-match');
-    else if (!isGt && !hasComment && hasGt) el.classList.add('gt-only');
     else if (hasComment) el.classList.add('has-comment');
   });
 
-  panel.querySelectorAll('.para.has-comment, .para.has-gt-match').forEach(el => {
+  panel.querySelectorAll('.para.has-comment').forEach(el => {
     el.onclick = () => {
       const idx = parseInt(el.dataset.idx);
       const comment = method.comments.find(c => c.paragraph_index === idx);
@@ -772,12 +580,10 @@ function updatePaperHighlights() {
 
 function renderComments() {
   const panel = document.getElementById('comment-panel');
-  const paper = getCurrentPaper();
   const method = paper.methods[currentMethod];
   if (!method) { panel.innerHTML = '<div class="empty-state">No data for this method.</div>'; return; }
 
   let html = '';
-
   if (method.overall_feedback) {
     html += `<div class="overall-feedback"><h3>Overall Feedback</h3>${renderMarkdownWithMath(method.overall_feedback)}</div>`;
   }
@@ -803,9 +609,6 @@ function renderComments() {
 
   panel.querySelectorAll('.comment-card').forEach(card => {
     card.classList.toggle('active', card.dataset.id === activeCommentId);
-  });
-
-  panel.querySelectorAll('.comment-card').forEach(card => {
     card.onclick = () => {
       const id = card.dataset.id;
       const comment = method.comments.find(c => c.id === id);
@@ -815,8 +618,7 @@ function renderComments() {
         const paraEl = document.getElementById('para-' + comment.paragraph_index);
         if (paraEl) paraEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
-      const cardEl = document.getElementById('card-' + id);
-      if (cardEl) cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('card-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
   });
 }
@@ -825,14 +627,10 @@ function renderCommentCard(c) {
   const paraLink = c.paragraph_index != null
     ? `<span class="para-link">\u00b6 ${c.paragraph_index}</span>`
     : '<span class="para-link unlocated">unlocated</span>';
-
   const quoteText = c.quote || '';
   const explanationText = c.explanation || c.message || '';
-
   return `<div class="comment-card" id="card-${c.id}" data-id="${c.id}">
-    <div class="card-header">
-      <span class="card-title">${escapeHtml(c.title)}</span>
-    </div>
+    <div class="card-header"><span class="card-title">${escapeHtml(c.title)}</span></div>
     ${quoteText ? `<div class="quote">${renderMarkdownWithMath(wrapBareLaTeX(quoteText))}</div>` : ''}
     ${explanationText ? `<div class="explanation">${renderMarkdownWithMath(explanationText)}</div>` : ''}
     ${paraLink}
@@ -840,8 +638,7 @@ function renderCommentCard(c) {
 }
 
 function wrapBareLaTeX(text) {
-  if (!text) return text;
-  if (text.includes('$')) return text;
+  if (!text || text.includes('$')) return text;
   if (/\\[a-zA-Z]/.test(text)) {
     if (text.includes('&')) return '$$\\begin{aligned}' + text + '\\end{aligned}$$';
     return '$' + text + '$';
@@ -855,7 +652,157 @@ function escapeHtml(s) {
   return div.innerHTML;
 }
 
-document.addEventListener('DOMContentLoaded', init);
+function render() {
+  buildMethodTabs();
+  renderMetrics();
+  renderLegend();
+  if (!renderedPaper) {
+    renderPaperContent();
+    renderedPaper = true;
+    typesetElement(document.getElementById('paper-panel'));
+  }
+  updatePaperHighlights();
+  renderComments();
+}
+
+function showViz() {
+  document.getElementById('status-screen').classList.add('hidden');
+  document.getElementById('viz-chrome').classList.add('visible');
+  document.getElementById('viz-main').classList.add('visible');
+  document.getElementById('paper-title').textContent = paper.title || 'Review';
+}
+
+function showStatus(title, msg, isError, hint) {
+  document.getElementById('status-title').textContent = title;
+  document.getElementById('status-msg').textContent = msg;
+  document.getElementById('status-hint').textContent = hint || '';
+  if (isError) {
+    document.getElementById('status-spinner').style.display = 'none';
+    document.getElementById('status-title').classList.add('status-error');
+  }
+}
+
+async function pollStatus(token) {
+  let resp;
+  try {
+    resp = await fetch(`${BACKEND_URL}/status/${token}`);
+  } catch {
+    showStatus(
+      'Server unreachable',
+      'The review server may be starting up (cold start ~30s). Retrying...',
+      false,
+      'Retrying in 15 seconds...'
+    );
+    pollTimer = setTimeout(() => pollStatus(token), 15000);
+    return;
+  }
+
+  if (resp.status === 404) {
+    showStatus(
+      'Token not found',
+      'This token was not found on the server. The server may have restarted and lost in-memory results. Please submit a new review.',
+      true,
+      ''
+    );
+    return;
+  }
+
+  const body = await resp.json();
+  const { status } = body;
+
+  if (status === 'pending') {
+    showStatus('Processing your review...', 'This usually takes 2–5 minutes. You\'ll receive an email when it\'s ready.', false, 'Checking again in 30 seconds...');
+    pollTimer = setTimeout(() => pollStatus(token), 30000);
+    return;
+  }
+
+  if (status === 'error') {
+    try {
+      const errResp = await fetch(`${BACKEND_URL}/results/${token}`);
+      const errData = await errResp.json();
+      showStatus('Review failed', errData.detail || 'An error occurred during review.', true, '');
+    } catch {
+      showStatus('Review failed', 'An error occurred during review.', true, '');
+    }
+    return;
+  }
+
+  if (status === 'done') {
+    const dataResp = await fetch(`${BACKEND_URL}/results/${token}`);
+    paper = await dataResp.json();
+    showViz();
+    render();
+  }
+}
+
+async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+
+  if (!token) {
+    document.getElementById('status-spinner').style.display = 'none';
+    document.getElementById('status-token').style.display = 'none';
+    showStatus(
+      'No token provided',
+      'Visit the home page to upload a paper and get a review token.',
+      true,
+      ''
+    );
+    return;
+  }
+
+  document.getElementById('status-token').textContent = token;
+  document.title = `OpenAIReview — ${token.slice(0, 8)}...`;
+
+  await pollStatus(token);
+}
+
+function copyToken() {
+  const token = document.getElementById('status-token').textContent;
+  if (!token) return;
+  const btn = document.getElementById('copy-token-btn');
+  navigator.clipboard.writeText(token).then(() => {
+    btn.textContent = 'Copied!';
+    btn.style.color = 'var(--green)';
+    btn.style.borderColor = 'var(--green)';
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 2000);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  init();
+
+  const handle = document.getElementById('resize-handle');
+  const commentPanel = document.getElementById('comment-panel');
+  let startX, startWidth;
+
+  handle.addEventListener('mousedown', (e) => {
+    startX = e.clientX;
+    startWidth = commentPanel.offsetWidth;
+    handle.classList.add('dragging');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+
+    function onMove(e) {
+      const delta = startX - e.clientX;
+      const newWidth = Math.min(Math.max(startWidth + delta, 280), window.innerWidth * 0.6);
+      commentPanel.style.flex = `0 0 ${newWidth}px`;
+    }
+    function onUp() {
+      handle.classList.remove('dragging');
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+});
 </script>
 </body>
 </html>

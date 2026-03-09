@@ -97,7 +97,7 @@ a:hover { color: var(--accent-hover); }
 .hero {
   max-width: 800px;
   margin: 0 auto;
-  padding: 52px 32px 44px;
+  padding: 32px 32px 44px;
   text-align: center;
   position: relative;
   z-index: 1;
@@ -108,7 +108,7 @@ a:hover { color: var(--accent-hover); }
   font-weight: 700;
   letter-spacing: -0.3px;
   line-height: 1.2;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   color: var(--text);
   white-space: nowrap;
 }
@@ -117,7 +117,7 @@ a:hover { color: var(--accent-hover); }
   color: var(--text-secondary);
   line-height: 1.65;
   max-width: 560px;
-  margin: 0 auto 44px;
+  margin: 0 auto 24px;
 }
 
 /* Install block */
@@ -156,6 +156,179 @@ a:hover { color: var(--accent-hover); }
   font-size: 14px;
   color: var(--text-secondary);
 }
+
+/* ── Upload Section ── */
+.upload-section {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 32px;
+}
+.upload-section .section-title {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+.upload-section .section-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+}
+.upload-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: var(--shadow-md);
+}
+.drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 36px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  margin-bottom: 20px;
+  position: relative;
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+.drop-zone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+.drop-icon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 12px;
+  color: var(--text-muted);
+}
+.drop-icon svg { width: 40px; height: 40px; stroke: currentColor; }
+.drop-label {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.drop-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.drop-zone.file-selected .drop-label { color: var(--accent); }
+
+.submit-btn {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 13px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.2s;
+  font-family: inherit;
+}
+.submit-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+  box-shadow: var(--shadow-md);
+}
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.upload-status {
+  margin-top: 16px;
+  font-size: 14px;
+  display: none;
+}
+.upload-status.visible { display: block; }
+.upload-status.error { color: #dc2626; }
+.token-box {
+  background: var(--accent-light);
+  border: 1px solid #f9c0c0;
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  margin-top: 20px;
+  display: none;
+}
+.token-box.visible { display: block; }
+.token-box .token-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.token-box .token-value {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  word-break: break-all;
+  margin-bottom: 12px;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+.token-box .token-cta {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+.view-btn {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.view-btn:hover { background: var(--accent-hover); color: #fff; }
+
+/* ── Token lookup ── */
+.token-lookup {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.token-lookup input {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  color: var(--text);
+}
+.token-lookup input::placeholder { color: var(--text-muted); }
+.token-lookup input:focus { border-color: var(--accent); box-shadow: var(--shadow-focus); }
+.token-lookup button {
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s;
+}
+.token-lookup button:hover { border-color: var(--accent); color: var(--accent); }
 
 /* ── Features Strip ── */
 .features-section {
@@ -320,7 +493,7 @@ a:hover { color: var(--accent-hover); }
 <body>
 
 <div class="header">
-  <span class="logo">OpenAIReview</span>
+  <a href="index.html" class="logo">OpenAIReview</a>
   <div class="header-links">
     <a href="blog.html">Blog</a>
     <a href="https://github.com/ChicagoHAI/OpenAIReview" target="_blank">GitHub</a>
@@ -349,9 +522,14 @@ a:hover { color: var(--accent-hover); }
     <p class="hero-link" style="margin-top: 12px;">
       <a href="blog.html">Read our blog post: AI-assisted reviewing is necessary and should be open &rarr;</a>
     </p>
+
+    <div style="margin-top: 36px; display: none;">
+      <a href="review/" class="submit-btn" style="display: inline-block; width: auto; padding: 14px 32px; font-size: 16px;">
+        Try on browser &rarr;
+      </a>
+    </div>
   </div>
 </div>
-
 
 <!-- Featured Examples -->
 <div class="examples-section">
@@ -471,6 +649,18 @@ function renderExamples() {
   grid.querySelectorAll('.example-card').forEach(card => observer.observe(card));
 }
 
+function lookupToken() {
+  const token = document.getElementById('lookup-input').value.trim();
+  if (!token) return;
+  window.location.href = `results/?token=${encodeURIComponent(token)}`;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('lookup-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') lookupToken();
+  });
+});
+
 function copyInstall() {
   navigator.clipboard.writeText('pip install openaireview').then(() => {
     const block = document.getElementById('install-block');
@@ -484,7 +674,9 @@ function copyInstall() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', renderExamples);
+document.addEventListener('DOMContentLoaded', () => {
+  renderExamples();
+});
 </script>
 </body>
 </html>
