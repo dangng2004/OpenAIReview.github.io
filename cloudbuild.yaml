@@ -20,3 +20,5 @@ steps:
         FIRESTORE_DB=openaireview-db,
         FRONTEND_URL=https://openaireview.github.io,
         FROM_EMAIL=noreply@hypogenic.ai
+      - --set-secrets
+      - OPENROUTER_API_KEY=OPENROUTER_API_KEY:latest,RESEND_API_KEY=RESEND_API_KEY:latest

@@ -6,3 +6,4 @@ backend/run_backend.sh
 *.json
 !package.json
 !package-lock.json
+deploy_cloud.sh
