@@ -322,6 +322,7 @@ a:hover { color: var(--accent-hover); }
     <!-- Upload Section -->
     <div class="upload-section">
       <div class="upload-card">
+        <div id="upload-form">
         <div class="drop-zone" id="drop-zone">
           <input type="file" id="pdf-input" accept=".pdf,.tex,.md" />
           <div class="drop-icon">
@@ -338,6 +339,7 @@ a:hover { color: var(--accent-hover); }
           onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='var(--shadow-focus)'"
           onblur="this.style.borderColor='var(--border)';this.style.boxShadow='none'" />
         <button class="submit-btn" id="submit-btn">Get Review</button>
+        </div><!-- end upload-form -->
         <div class="upload-status" id="upload-status"></div>
         <div class="token-box" id="token-box">
           <div class="token-label">Save your token</div>
@@ -365,7 +367,7 @@ const BACKEND_URL = 'https://openaireview-backend-947059889174.us-central1.run.a
 function lookupToken() {
   const token = document.getElementById('lookup-input').value.trim();
   if (!token) return;
-  window.location.href = `../results/?token=${encodeURIComponent(token)}`;
+  window.location.href = `/results.html?token=${encodeURIComponent(token)}`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -459,12 +461,33 @@ function initUpload() {
       return;
     }
 
-    hideStatus();
+    document.getElementById('upload-form').style.display = 'none';
     tokenValue.textContent = token;
-    const resultsUrl = `../results/?token=${token}`;
+    const resultsUrl = `/results.html?token=${token}`;
     viewBtn.href = resultsUrl;
     tokenBox.classList.add('visible');
+    showStatus('Your paper is being reviewed. You\'ll be redirected automatically when it\'s ready...', false);
+    pollStatus(token, resultsUrl);
   });
+
+  async function pollStatus(token, resultsUrl) {
+    while (true) {
+      await new Promise(r => setTimeout(r, 15000));
+      try {
+        const resp = await fetch(`${BACKEND_URL}/status/${token}`);
+        if (!resp.ok) continue;
+        const { status } = await resp.json();
+        if (status === 'done') {
+          window.location.href = resultsUrl;
+          return;
+        }
+        if (status === 'error') {
+          showStatus('Review failed. Please try submitting again.', true);
+          return;
+        }
+      } catch (_) { /* network blip, keep polling */ }
+    }
+  }
 
   function showStatus(msg, isError) {
     statusEl.textContent = msg;

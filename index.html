@@ -652,7 +652,7 @@ function renderExamples() {
 function lookupToken() {
   const token = document.getElementById('lookup-input').value.trim();
   if (!token) return;
-  window.location.href = `results/?token=${encodeURIComponent(token)}`;
+  window.location.href = `/results.html?token=${encodeURIComponent(token)}`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
